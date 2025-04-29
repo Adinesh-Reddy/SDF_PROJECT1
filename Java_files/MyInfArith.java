@@ -33,6 +33,7 @@ public class MyInfArith {
                 }
             default -> System.out.println("Invalid type");
         }
+        
 
         
         

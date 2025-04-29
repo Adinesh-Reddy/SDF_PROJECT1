@@ -1,0 +1,51 @@
+<project name="SDF_PROJECT1" basedir="." default="run">
+
+<property name="src.dir" value="Java_files" />
+<property name="build.dir" value="build" />
+<property name="jar.files" value="arithmetic.jar" />
+<property name="main.class" value="MyInfArith" />
+
+<target name="clean">
+	<echo>Cleaning existing files</echo>
+	<delete dir="${build.dir}" />
+	<delete file="${jar.files}" />
+</target>
+
+<target name="init">
+	<mkdir dir="${build.dir}" />
+</target>
+
+
+
+
+<target name="compile" depends="init">
+	<echo>Compiling java files</echo>
+	<javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false" />
+</target>
+
+<target name="jar" depends="compile">
+	<echo>Creating JAR file...</echo>
+	<jar destfile="${jar.files}" basedir="${build.dir}" >
+	     <exclude name="MyInfArith.class"/>
+	</jar>
+
+</target>
+
+<target name="run" depends="compile">
+	<echo>Running the project...</echo>
+        <java classname="${main.class}" fork="true">
+            <classpath path="${build.dir}" />
+	    <arg value="${arg1}" />
+	    <arg value="${arg2}" />
+	    <arg value="${arg3}" />
+	    <arg value="${arg4}" />
+        </java>
+</target>
+
+</project>
+
+
+
+
+
+	

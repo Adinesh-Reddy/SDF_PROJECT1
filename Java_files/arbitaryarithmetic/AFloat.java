@@ -191,8 +191,8 @@ public class AFloat{
           
      
         
-        if(s2.equals("0")) throw new ArithmeticException("Division by Zero Error");
-        if(s1.equals("0")) return "0";
+        if(RemoveStartZero(s2).equals("0")) throw new ArithmeticException("Division by Zero Error");
+        if(RemoveStartZero(s1).equals("0")) return "0";
         String Q="";
         String R="";
         for(int i=0;i<s1.length();i++){
@@ -328,7 +328,7 @@ public class AFloat{
         
         if(pro.charAt(0)=='.') return "0"+pro;
 
-        return pro;
+        return RoundOffTo30(pro);
     }
 
     public String SubF(String s1,String s2){
@@ -403,12 +403,12 @@ public class AFloat{
             out_put=out_put.substring(1);
             out_put=RemoveStartZero(out_put);
             if(out_put.charAt(0)=='.') { return "-"+"0"+out_put;}
-            else{ return "-"+out_put;}
+            else{ return RoundOffTo30("-"+out_put);}
         }
         else{
             out_put=RemoveStartZero(out_put);
             if(out_put.charAt(0)=='.') { return "0"+out_put;}
-            else{ return out_put;}
+            else{ return RoundOffTo30(out_put);}
 
 
         }
@@ -485,7 +485,7 @@ public class AFloat{
 
         
        
-        int L=30;
+        int L=1000;
         while(L!=0){
             s1=s1+"0";
             L--;
@@ -497,7 +497,7 @@ public class AFloat{
        
         if(res.equals("0")) return "0.0";
         //if (res.equals("Division by Zero Error")) return res;
-        res=res.substring(0,(res.length()-30))+"."+res.substring((res.length()-30));
+        res=res.substring(0,(res.length()-1000))+"."+res.substring((res.length()-1000));
 
         res=RemoveStartZero(RemoveEndZero(res));
         
@@ -507,7 +507,7 @@ public class AFloat{
         if(res.charAt(res.length()-1)=='.'){ res=res.substring(0,(res.length()-1))+".0";}
 
 
-        return res;
+        return RoundOffTo30(res);
 
     }
 
