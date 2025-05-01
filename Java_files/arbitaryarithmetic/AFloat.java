@@ -1,244 +1,305 @@
 package arbitaryarithmetic;
+/* AFloat class to implement arbitrary-precision  arithmetic
+ * Using string representation for storing large numbers without overflow
+*/
+
 public class AFloat{
-    public String value;
+    public String value;// To store the integer in string form
+
+    //Defualt constructor initializes to zero
     public AFloat(){
         this.value="0.0";
     }
+
+    // Constructor accepting a string value
     public AFloat(String s){
         this.value=s;
     }
+
+    // Copy constructor to copy value form another insatnce
+    public AFloat(AFloat other) {
+        this.value = other.value;
+    }
+
+    // Static parse to parse a string into AInteger insatance
+    public static AFloat parse(String s) {
+        return new AFloat(s);
+    }
+
+    //Making into single arguement
+    //Adding another float to this float 
+
     public AFloat add(AFloat s){
         return new AFloat(AddF(this.value,s.value));
     }
+
+    //multiplying another float to this float
     public AFloat mul(AFloat s){
         return new AFloat(MultiplyF(this.value,s.value));
     }
+
+    //dividing this float by another float
     public AFloat div(AFloat s){
         return new AFloat(DivisionF(this.value,s.value));
     }
+
+    //subtraction of another flaot from this float
     public AFloat sub(AFloat s){
         return new AFloat(SubF(this.value,s.value));
     }
 
-    public String Add(String s1,String s2){
+    //Addition of two strings and returns output in string form
+    public String Add(String Str1,String Str2){
         
     //adding zeros before numbers to make the lengths equal
-        while (s1.length()<s2.length()){
-            s1="0"+s1;
+        while (Str1.length()<Str2.length()){
+            Str1="0"+Str1;
 
         }
-        while (s2.length()<s1.length()){
-            s2="0"+s2;
+        while (Str2.length()<Str1.length()){
+            Str2="0"+Str2;
 
         }
-        String s="";
-        int B=0;
-        int n=s1.length();
-        for(int i=0;i<s1.length();i++){
-            B=((s1.charAt(n-1-i)-'0')+(s2.charAt(n-1-i)-'0'))+B;
-            s=String.valueOf(B%10)+s;
-            B=B/10;
 
+        String Str="";// output string 
+        int carry=0; //initializing carry as zero
+        int n=Str1.length(); //length of the string
 
-
+        //addition for logic
+        for(int i=0;i<Str1.length();i++){
+            carry=((Str1.charAt(n-1-i)-'0')+(Str2.charAt(n-1-i)-'0'))+carry;
+            Str=String.valueOf(carry%10)+Str;
+            carry=carry/10;
         }
-        if(B!=0){
-            s=String.valueOf(B)+s;
+
+        if(carry!=0){
+            Str=String.valueOf(carry)+Str; //appending carry if it is not zero
         }
-        return s; //here we are not removing zeros at start in order to put decimal point in float addition
+
+        return Str; //here we are not removing zeros at start in order to put decimal point in float addition
     }
     
     
-    public String RemoveStartZero(String s){
-        int i=0;
+     // Removes all leading zeros from the string representation of a number
+     public String RemoveStartZero(String s){
+        int i=0; // Start index
+
+        // Move index forward while characters are zero
         while(i<s.length() && s.charAt(i)=='0' ){
             i++;
         }
-        if(i==s.length()) return "0"; //if all are zero will return 0
 
+        // If all characters are zero, return single "0"
+        if(i==s.length()) return "0"; 
+        
+         // Otherwise return substring starting from the first non-zero character
         return s.substring(i);
     }
-     // comparing numerically
-    public int compare(String s1, String s2) {
-        
-        s1 = RemoveStartZero(s1); 
-        s2 = RemoveStartZero(s2);
     
-        
-        if (s1.length() > s2.length()) return 1;
-        if (s1.length() < s2.length()) return -1;
+
+    //Comparing two strings numerically
+    public int compare(String Str1, String Str2) {
     
-        
-        for (int i = 0; i < s1.length(); i++) {
-            if ((s1.charAt(i)-'0') > (s2.charAt(i)-'0')) return 1;
-            if ((s1.charAt(i)-'0') < (s2.charAt(i)-'0')) return -1;
+        // Remove leading zeros from both strings
+        Str1 = RemoveStartZero(Str1);
+        Str2 = RemoveStartZero(Str2);
+    
+        // If Str1 is longer than Str2 after removing zeros, it is greater
+        if (Str1.length() > Str2.length()) return 1;
+    
+        // If Str1 is shorter than Str2, it is smaller
+        if (Str1.length() < Str2.length()) return -1;
+    
+        // If lengths are equal, compare characters one by one
+        for (int i = 0; i < Str1.length(); i++) {
+    
+            // If current digit of Str1 is greater, return 1
+            if ((Str1.charAt(i) - '0') > (Str2.charAt(i) - '0')) return 1;
+    
+            // If current digit of Str1 is smaller, return -1
+            if ((Str1.charAt(i) - '0') < (Str2.charAt(i) - '0')) return -1;
         }
     
-        
+        // All digits are equal, so both strings represent the same number
         return 0;
     }
     
-    public String Multiply(String s1,String s2){
-        
-        s1=RemoveStartZero(s1);
-        s2=RemoveStartZero(s2);
 
+
+    //Multiplication of two strings and giving output as String
+    public String Multiply(String Str1,String Str2){
         
-        int m=s2.length();
-        String result1="0";
+        // Remove leading zeros from both input strings
+        Str1=RemoveStartZero(Str1); 
+        Str2=RemoveStartZero(Str2); 
+
+        // Length of second string (used to loop through each digit)
+        int m=Str2.length();
+
+        // Initialize final result as zero
+        String s="0"; 
+ 
+        // Outer loop goes through each digit in Str2 from right to left
         for(int l=0;l<m;l++){
-            String result="0";
+            String result="0";// Temporary result for current digit of Str2
 
-            int TEMP=s2.charAt(m-l-1)-'0';
+            // Get current digit from Str2 (as integer) from right end
+            int TEMP=Str2.charAt(m-l-1)-'0';
             
+            // Repeat addition of Str1, TEMP times to simulate multiplication
             while(TEMP!=0){
-                result=Add(result,s1);
+                result=Add(result,Str1);
                 TEMP--;
             }
-
+            
+            // Add required number of zeros at the end (place value shift)
             int L=l;
             while(L!=0){
                 result=result+"0";
                 L--;
                 
             }
-
-            result1=Add(result1,result);
+            // Add intermediate result to final result S
+            s=Add(s,result);
 
         }
-
-        return RemoveStartZero(result1);
+        // Return final result after removing any leading zeros
+        return RemoveStartZero(s);
     }
 
+    //Mutliplication of two floats returning result as output string
+    public String MultiplyF(String Str1,String Str2){
 
 
+        if(Str1.charAt(0)=='-' && Str2.charAt(0)!='-'){return (MultiplyF(Str1.substring(1),Str2).equals("0.0"))? MultiplyF(Str1.substring(1),Str2):("-"+MultiplyF(Str1.substring(1),Str2));  }
+        if(Str2.charAt(0)=='-' && Str1.charAt(0)!='-'){return (MultiplyF(Str2.substring(1),Str1).equals("0.0"))? MultiplyF(Str2.substring(1),Str1):("-"+MultiplyF(Str2.substring(1),Str1));}
+        if(Str1.charAt(0)=='-' && Str2.charAt(0)=='-'){return MultiplyF(Str1.substring(1),Str2.substring(1));}
 
+        int no_of_decimal_points_Str1=0; //initiallizing no of decimal points as zero
+        int no_of_decimal_points_Str2=0;
 
-    
+        int N1=Str1.length();
+        int N2=Str2.length();
 
-    public String MultiplyF(String s1,String s2){
-
-        if(s1.charAt(0)=='-' && s2.charAt(0)!='-'){return (MultiplyF(s1.substring(1),s2).equals("0.0"))? MultiplyF(s1.substring(1),s2):("-"+MultiplyF(s1.substring(1),s2));  }
-        if(s2.charAt(0)=='-' && s1.charAt(0)!='-'){return (MultiplyF(s2.substring(1),s1).equals("0.0"))? MultiplyF(s2.substring(1),s1):("-"+MultiplyF(s2.substring(1),s1));}
-        if(s1.charAt(0)=='-' && s2.charAt(0)=='-'){return MultiplyF(s1.substring(1),s2.substring(1));}
-
-        int j1=0;
-        int j2=0;
-        int N1=s1.length();
-        int N2=s2.length();
+        //finding no of decimal points in Str1 and Str2
         while(N1!=0){
-            if(s1.charAt(N1-1)=='.'){ j1++;}
+            if(Str1.charAt(N1-1)=='.'){ no_of_decimal_points_Str1++;}
             N1--;
         }
         while(N2!=0){
-            if(s2.charAt(N2-1)=='.'){ j2++;}
+            if(Str2.charAt(N2-1)=='.'){ no_of_decimal_points_Str2++;}
             N2--;
         }
-        if(j1==0){s1=s1+".0";}
-        if(j2==0){s2=s2+".0";}
-        int n1=s1.indexOf('.');
-        int n2=s2.indexOf('.');
-        s1=s1.substring(0,n1)+s1.substring(n1+1);
-        s2=s2.substring(0,n2)+s2.substring(n2+1);
-        //s1=RemoveZero(s1);
-        //s2=RemoveZero(s2);
-        //System.out.println(s1);
-        //System.out.println(s2);
 
-        String pro= Multiply(s1, s2);
-        //System.out.println(pro);
+        if(no_of_decimal_points_Str1==0){Str1=Str1+".0";} //Appending ".0" if no of decimal points are Zero
+        if(no_of_decimal_points_Str2==0){Str2=Str2+".0";}
+
+
+        //finding index of decimal point Str1 and Str2
+        int index_of_decimal_point_Str1=Str1.indexOf('.');
+        int index_of_decimal_point_Str2=Str2.indexOf('.');
+
+        //Removing decimal point and making into integers
+        Str1=Str1.substring(0,index_of_decimal_point_Str1)+Str1.substring(index_of_decimal_point_Str1+1);
+        Str2=Str2.substring(0,index_of_decimal_point_Str2)+Str2.substring(index_of_decimal_point_Str2+1);
+        
+        
+
+        String Str= Multiply(Str1, Str2);
+        
 
     
-        int l1=pro.length();
-        int l2=(s1.length()-n1+s2.length()-n2);
-       // System.err.println(l2);
-        //int decimal_point=(l2-11+1);
-        while(pro.length()<l2){
-            pro="0"+pro;
-           // decimal_point++;
+        int l1=Str.length();
+
+        //l2 is sum of no of digits after decimal point in str1 and str2
+
+        int l2=(Str1.length()-index_of_decimal_point_Str1+Str2.length()-index_of_decimal_point_Str2);
+        
+       // if length of Str is less than l2 append zero before str
+        while(Str.length()<l2){
+            Str="0"+Str;
+
         }
-        l1=pro.length();
-        //System.out.println(pro);
+
+        l1=Str.length();
         
-
-        pro=RemoveStartZero(RemoveEndZero((pro.substring(0,l1-l2)+"."+pro.substring(l1-l2))));
-        //System.out.println(pro);
-        if(pro.charAt(0)=='.'){ pro='0'+pro;}
+        //Adding decimal point to the integer result
+        Str=RemoveStartZero(RemoveEndZero((Str.substring(0,l1-l2)+"."+Str.substring(l1-l2))));
         
-
-        if(pro.charAt(pro.length()-1)=='.'){ pro=pro.substring(0,(pro.length()-1))+".0";}
-
-
-        return RoundOffTo30(pro);
-
+        //if starting char is "." appending "0" ex- .99 --- 0.99
+        if(Str.charAt(0)=='.'){ Str='0'+Str;}
         
+        //if last char is "." append '0' at last
+        if(Str.charAt(Str.length()-1)=='.'){ Str=Str.substring(0,(Str.length()-1))+".0";}
 
-        
+        //rounded of to 30 decimal position if it exceeds 30 digits after decimal point
+        return RoundOffTo30(Str);       
 
     }
     
-    public String Division(String s1,String s2){
+    public String Division(String Str1,String Str2){
 
-       
+       // Handles exception "Division by Zero Error"
+        if(RemoveStartZero(Str2).equals("0")) throw new ArithmeticException("Division by Zero Error");
+        if(RemoveStartZero(Str1).equals("0")) return "0";
 
+        String Remainder=""; //Initialises to empty
+        String Quotient="";  //Initialises to empty
         
+        //loop runs over each digit of dividend
+        for(int i=0;i<Str1.length();i++){
+         
+        //Append current digit to remainder
+         Remainder=Remainder+Str1.charAt(i);
+         Remainder=RemoveStartZero(Remainder);
  
- 
-        
-        //s1=RemoveStartZero(s1);
-        //s2=RemoveStartZero(s2);
- 
-          
-     
-        
-        if(RemoveStartZero(s2).equals("0")) throw new ArithmeticException("Division by Zero Error");
-        if(RemoveStartZero(s1).equals("0")) return "0";
-        String Q="";
-        String R="";
-        for(int i=0;i<s1.length();i++){
-         Q=Q+s1.charAt(i);
-         Q=RemoveStartZero(Q);
- 
-         int dum=0;
-         while(compare(Q,s2)>=0){
-             Q=Sub(Q,s2);
-             dum++;
+         int Temp=0; //how many times we can subtract divisor from current remainder
+
+         while(compare(Remainder,Str2)>=0){
+             Remainder=Sub(Remainder,Str2);
+             Temp++;
          }
-         //System.out.println(dum);
-         R=R+String.valueOf(dum);
+         
+         //Appending every time temp to Quotient
+         Quotient=Quotient+String.valueOf(Temp);
  
         }
  
-      return R;
+      return Quotient; //returning without removing zeros
      }
  
-    public String RemoveEndZero(String s){
-        int i=s.length()-1;
-        while(i>0 && s.charAt(i)=='0'){
+    //to remove zeros after a String with decimal point ex-- 0.0990000 -> 0.099
+    public String RemoveEndZero(String Str){
+
+
+        int i=Str.length()-1;// initiales index as last char
+
+        while(i>0 && Str.charAt(i)=='0'){
             i--;
         }
-
-        return s.substring(0,(i+1));
+        
+        //returns substring
+        return Str.substring(0,(i+1));
 
     }
     
-    public String Sub(String s1, String s2) {
+    public String Sub(String Str1, String Str2) {
         
     
-        while (s1.length() < s2.length()) {
-            s1 = '0' + s1;
+        while (Str1.length() < Str2.length()) {
+            Str1 = '0' + Str1;
         }
-        while (s2.length() < s1.length()) {
-            s2 = '0' + s2;
+        while (Str2.length() < Str1.length()) {
+            Str2 = '0' + Str2;
         }
     
-        String a = s1;
-        String b = s2;
+        String a = Str1;
+        String b = Str2;
         boolean isNegative = false;
     
-        if (compare(s1,s2)==-1) {
-            a = s2;
-            b = s1;
+        if (compare(Str1,Str2)==-1) {
+            a = Str2;
+            b = Str1;
             isNegative = true;
         }
     
@@ -266,62 +327,64 @@ public class AFloat{
         return S;
     }
         
-    public String AddF(String s1,String s2){
-        if(s1.charAt(0)=='-' && s2.charAt(0)!='-'){return SubF(s2,s1.substring(1));}
-        if(s2.charAt(0)=='-' && s1.charAt(0)!='-'){return SubF(s1,s2.substring(1));}
-        if(s1.charAt(0)=='-' && s2.charAt(0)=='-'){return (AddF(s1.substring(1),s2.substring(1))).equals("0.0")? AddF(s1.substring(1),s2.substring(1)):("-"+AddF(s1.substring(1),s2.substring(1))) ;}
+    public String AddF(String Str1,String Str2){
+        
+        if(Str1.charAt(0)=='-' && Str2.charAt(0)!='-'){return SubF(Str2,Str1.substring(1));}
+        if(Str2.charAt(0)=='-' && Str1.charAt(0)!='-'){return SubF(Str1,Str2.substring(1));}
+        if(Str1.charAt(0)=='-' && Str2.charAt(0)=='-'){return (AddF(Str1.substring(1),Str2.substring(1))).equals("0.0")? AddF(Str1.substring(1),Str2.substring(1)):("-"+AddF(Str1.substring(1),Str2.substring(1))) ;}
         
         int j1=0;
         int j2=0;
-        int N1=s1.length();
-        int N2=s2.length();
+        int N1=Str1.length();
+        int N2=Str2.length();
         while(N1!=0){
-            if(s1.charAt(N1-1)=='.'){ j1++;}
+            if(Str1.charAt(N1-1)=='.'){ j1++;}
             N1--;
         }
         while(N2!=0){
-            if(s2.charAt(N2-1)=='.'){ j2++;}
+            if(Str2.charAt(N2-1)=='.'){ j2++;}
             N2--;
         }
-        if(j1==0){s1=s1+".0";}
-        if(j2==0){s2=s2+".0";}
+        
+        if(j1==0){Str1=Str1+".0";}
+        if(j2==0){Str2=Str2+".0";}
 
 
         //making number of digits after decimal equal
-        int n1=s1.indexOf('.');
-        int n2=s2.indexOf('.');
-        if((s1.length()-1-n1) > (s2.length()-1-n2) ){
-            int N = (s1.length()-1-n1) - (s2.length()-1-n2);
+        int n1=Str1.indexOf('.');
+        int n2=Str2.indexOf('.');
+        if((Str1.length()-1-n1) > (Str2.length()-1-n2) ){
+            int N = (Str1.length()-1-n1) - (Str2.length()-1-n2);
             while(N!=0){
-                s2=s2+"0";
+                Str2=Str2+"0";
                 N--;
             }
         }
 
         else{
-            int N = (s2.length()-1-n2) - (s1.length()-1-n1);
+            int N = (Str2.length()-1-n2) - (Str1.length()-1-n1);
             while(N!=0){
-                s1=s1+"0";
+                Str1=Str1+"0";
                 N--;
 
             }
         }
 
-        n1=s1.indexOf('.');
-        n2=s2.indexOf('.');
-        s1=s1.substring(0,n1)+s1.substring(n1+1);
-        s2=s2.substring(0,n2)+s2.substring(n2+1);
-        ///s1=RemoveZero(s1);
-        //s2=RemoveZero(s2);
+        n1=Str1.indexOf('.');
+        n2=Str2.indexOf('.');
+        Str1=Str1.substring(0,n1)+Str1.substring(n1+1);
+        Str2=Str2.substring(0,n2)+Str2.substring(n2+1);
+        ///Str1=RemoveZero(Str1);
+        //Str2=RemoveZero(Str2);
         
 
-        String pro= Add(s1, s2);
+        String pro= Add(Str1, Str2);
 
     
         int l1=pro.length();
         int l2;
-        if((s1.length()-n1)<(s2.length()-n2)){ l2=(s2.length()-n2);}
-        else{ l2=(s1.length()-n1);}
+        if((Str1.length()-n1)<(Str2.length()-n2)){ l2=(Str2.length()-n2);}
+        else{ l2=(Str1.length()-n1);}
         pro=RemoveEndZero(pro.substring(0,l1-l2)+"."+pro.substring(l1-l2));
         pro=RemoveStartZero(pro);
         if(pro.charAt(pro.length()-1)=='.') {pro= pro+"0";}
@@ -331,194 +394,241 @@ public class AFloat{
         return RoundOffTo30(pro);
     }
 
-    public String SubF(String s1,String s2){
+    public String SubF(String Str1, String Str2) {
 
-        if(s1.equals(s2)) return "0";
-        if(s1.charAt(0)=='-' && s2.charAt(0)!='-'){return "-"+AddF(s1.substring(1),s2);  }
-        if(s2.charAt(0)=='-' && s1.charAt(0)!='-'){return AddF(s1,s2.substring(1));}
-        if(s1.charAt(0)=='-' && s2.charAt(0)=='-'){return SubF(s2.substring(1),s1.substring(1));}
-        int j1=0;
-        int j2=0;
-        int N1=s1.length();
-        int N2=s2.length();
-        while(N1!=0){
-            if(s1.charAt(N1-1)=='.'){ j1++;}
+        // If both strings are equal, the result is zero
+        if (Str1.equals(Str2)) return "0";
+    
+        // Case 1: Str1 negative, Str2 positive → -(abs(Str1) + Str2)
+        if (Str1.charAt(0) == '-' && Str2.charAt(0) != '-') {
+            return "-" + AddF(Str1.substring(1), Str2);
+        }
+    
+        // Case 2: Str2 negative, Str1 positive → Str1 + abs(Str2)
+        if (Str2.charAt(0) == '-' && Str1.charAt(0) != '-') {
+            return AddF(Str1, Str2.substring(1));
+        }
+    
+        // Case 3: both Str1 and Str2 negative → -(Str2 - Str1)
+        if (Str1.charAt(0) == '-' && Str2.charAt(0) == '-') {
+            return SubF(Str2.substring(1), Str1.substring(1));
+        }
+    
+        // Check if Str1 and Str2 contain decimal points
+        int j1 = 0, j2 = 0;
+        int N1 = Str1.length(), N2 = Str2.length();
+    
+        // Count decimal points in Str1
+        while (N1 != 0) {
+            if (Str1.charAt(N1 - 1) == '.') { j1++; }
             N1--;
         }
-        while(N2!=0){
-            if(s2.charAt(N2-1)=='.'){ j2++;}
+    
+        // Count decimal points in Str2
+        while (N2 != 0) {
+            if (Str2.charAt(N2 - 1) == '.') { j2++; }
             N2--;
         }
-        if(j1==0){s1=s1+".0";}
-        //System.out.println(s1);
     
-        if(j2==0){s2=s2+".0";}
-        //System.out.println(s2);
-
-        
-        int n1=s1.indexOf('.');
-        int n2=s2.indexOf('.');
-        if((s1.length()-1-n1) > (s2.length()-1-n2) ){
-            int N = (s1.length()-1-n1) - (s2.length()-1-n2);
-            while(N!=0){
-                s2=s2+"0";
+        // If no decimal point in Str1, add ".0" to make it float
+        if (j1 == 0) { Str1 = Str1 + ".0"; }
+    
+        // If no decimal point in Str2, add ".0" to make it float
+        if (j2 == 0) { Str2 = Str2 + ".0"; }
+    
+        // Get position of decimal points
+        int n1 = Str1.indexOf('.');
+        int n2 = Str2.indexOf('.');
+    
+        // Making no of digits after a decimal point same by adding zeros
+        if ((Str1.length() - 1 - n1) > (Str2.length() - 1 - n2)) {
+            int N = (Str1.length() - 1 - n1) - (Str2.length() - 1 - n2);
+            while (N != 0) {
+                Str2 = Str2 + "0";
+                N--;
+            }
+        } else {
+            int N = (Str2.length() - 1 - n2) - (Str1.length() - 1 - n1);
+            while (N != 0) {
+                Str1 = Str1 + "0";
                 N--;
             }
         }
-
-        else{
-            int N = (s2.length()-1-n2) - (s1.length()-1-n1);
-            while(N!=0){
-                s1=s1+"0";
-                N--;
-
-            }
-        }
-        //System.out.println(s1+s2);
-        n1=s1.indexOf('.');
-        n2=s2.indexOf('.');
-        s1=s1.substring(0,n1)+s1.substring(n1+1);
-        s2=s2.substring(0,n2)+s2.substring(n2+1);
-        //System.out.println(s1+s2);
-
-        //s1=RemoveZero(s1);
-        //s2=RemoveZero(s2);
-        
-
-        String pro= Sub(s1,s2);
-
     
-        int l1=pro.length();
-
+        // Remove decimal points to treat numbers as large integers
+        n1 = Str1.indexOf('.');
+        n2 = Str2.indexOf('.');
+        Str1 = Str1.substring(0, n1) + Str1.substring(n1 + 1);
+        Str2 = Str2.substring(0, n2) + Str2.substring(n2 + 1);
+    
+        // Subtract the two numbers as large integers
+        String pro = Sub(Str1, Str2);
+    
+        int l1 = pro.length();  // Length of result string
+    
+        // Calculate number of digits after decimal
         int l2;
-        if((s1.length()-n1)<(s2.length()-n2)){ l2=(s2.length()-n2);}
-        else{ l2=(s1.length()-n1);}
-        int K=(l1-l2);
-        
-        String out_put = RemoveEndZero(pro.substring(0,K)+"."+pro.substring(K));
-        //out_put=RemoveZero(out_put);
-        if(out_put.charAt(out_put.length()-1)=='.') {out_put= out_put+"0";}
-
-        if(out_put.charAt(0)=='-'){
-            out_put=out_put.substring(1);
-            out_put=RemoveStartZero(out_put);
-            if(out_put.charAt(0)=='.') { return "-"+"0"+out_put;}
-            else{ return RoundOffTo30("-"+out_put);}
-        }
-        else{
-            out_put=RemoveStartZero(out_put);
-            if(out_put.charAt(0)=='.') { return "0"+out_put;}
-            else{ return RoundOffTo30(out_put);}
-
-
-        }
-
+        if ((Str1.length() - n1) < (Str2.length() - n2)) {
+            l2 = (Str2.length() - n2);
+        } else {
+            l2 = (Str1.length() - n1);
         }
     
-        
-        //if(out_put.charAt(out_put.length()-1)=='.') {return out_put.substring(0,out_put.length()-1);}
-    public String DivisionF(String s1,String s2){
-         
-
-        
-
-
-        if(s1.charAt(0)=='-' && s2.charAt(0)!='-'){return (DivisionF(s1.substring(1),s2).equals("0.0"))? DivisionF(s1.substring(1),s2):("-"+DivisionF(s1.substring(1),s2));  }
-        if(s2.charAt(0)=='-' && s1.charAt(0)!='-'){return (DivisionF(s1,s2.substring(1)).equals("0.0"))? DivisionF(s1,s2.substring(1)):("-"+DivisionF(s1,s2.substring(1)));}
-        if(s1.charAt(0)=='-' && s2.charAt(0)=='-'){return DivisionF(s1.substring(1),s2.substring(1));}
- 
-        //adding .0 at end if integers are passed as aruguments
-
-        int j1=0;
-        int j2=0;
-        int N1=s1.length();
-        int N2=s2.length();
-        while(N1!=0){
-            if(s1.charAt(N1-1)=='.'){ j1++;}
-            N1--;
+        int K = (l1 - l2);  // Position to insert the decimal point
+    
+        // Insert decimal point and remove trailing zeros
+        String out_put = RemoveEndZero(pro.substring(0, K) + "." + pro.substring(K));
+    
+        // If result ends with '.', add '0' to make it a valid float
+        if (out_put.charAt(out_put.length() - 1) == '.') {
+            out_put = out_put + "0";
         }
-        while(N2!=0){
-            if(s2.charAt(N2-1)=='.'){ j2++;}
-            N2--;
-        }
-
-        if(j1==0){s1=s1+".0";} //appending ".0" if s1 is an integer
-        if(j2==0){s2=s2+".0";} //appending ".0" if s2 is an integer
-        //System.out.println(s1+s2);
-
-
-
-        
-        int n1=s1.indexOf('.');
-        int n2=s2.indexOf('.');
-        
-        // making same no of digits after decimal point
-
-        if((s1.length()-1-n1) > (s2.length()-1-n2) ){
-            int N = (s1.length()-1-n1) - (s2.length()-1-n2);
-            while(N!=0){
-                s2=s2+"0";
-                N--;
+    
+        // Handle negative result
+        if (out_put.charAt(0) == '-') {
+            out_put = out_put.substring(1);  // Remove negative sign temporarily
+            out_put = RemoveStartZero(out_put);  // Remove leading zeros
+    
+            //(e.g., "-.5" becomes "-0.5")
+            if (out_put.charAt(0) == '.') {
+                return "-" + "0" + out_put;
+            } else {
+                return RoundOffTo30("-" + out_put);
+            }
+    
+        } else {
+            // Result is positive
+            out_put = RemoveStartZero(out_put);  // Remove leading zeros
+    
+            //(e.g., ".5" becomes "0.5")
+            if (out_put.charAt(0) == '.') {
+                return "0" + out_put;
+            } else {
+                return RoundOffTo30(out_put);
             }
         }
+    }
+    
+    
+        
+        
+        public String DivisionF(String Str1, String Str2) {
 
-        else{
-            int N = (s2.length()-1-n2) - (s1.length()-1-n1);
-            while(N!=0){
-                s1=s1+"0";
-                N--;
-
+            // Handle case where Str1 is negative and Str2 is positive
+            if (Str1.charAt(0) == '-' && Str2.charAt(0) != '-') {
+                return (DivisionF(Str1.substring(1), Str2).equals("0.0")) ?
+                    DivisionF(Str1.substring(1), Str2) :
+                    ("-" + DivisionF(Str1.substring(1), Str2));
             }
+        
+            // Handle case where Str2 is negative and Str1 is positive
+            if (Str2.charAt(0) == '-' && Str1.charAt(0) != '-') {
+                return (DivisionF(Str1, Str2.substring(1)).equals("0.0")) ?
+                    DivisionF(Str1, Str2.substring(1)) :
+                    ("-" + DivisionF(Str1, Str2.substring(1)));
+            }
+        
+            // Handle case where both Str1 and Str2 are negative
+            if (Str1.charAt(0) == '-' && Str2.charAt(0) == '-') {
+                return DivisionF(Str1.substring(1), Str2.substring(1));
+            }
+        
+            // Count how many decimal points are in Str1 and Str2
+            int no_of_decimal_point_Str1 = 0;
+            int no_of_decimal_point_Str2 = 0;
+            int N1 = Str1.length(); //str1 length
+            int N2 = Str2.length(); //str2 length
+        
+            while (N1 != 0) {
+                if (Str1.charAt(N1 - 1) == '.') { no_of_decimal_point_Str1++; }
+                N1--;
+            }
+        
+            while (N2 != 0) {
+                if (Str2.charAt(N2 - 1) == '.') { no_of_decimal_point_Str2++; }
+                N2--;
+            }
+        
+            // If Str1 has no decimal point, append ".0" to make it a float
+            if (no_of_decimal_point_Str1 == 0) { Str1 = Str1 + ".0"; }
+        
+            // If Str2 has no decimal point, append ".0" to make it a float
+            if (no_of_decimal_point_Str2 == 0) { Str2 = Str2 + ".0"; }
+        
+            // Get index of decimal points in Str1 and Str2
+            int n1 = Str1.indexOf('.');
+            int n2 = Str2.indexOf('.');
+        
+            // Equalize the number of digits after the decimal point by adding zeros
+            if ((Str1.length() - 1 - n1) > (Str2.length() - 1 - n2)) {
+                int N = (Str1.length() - 1 - n1) - (Str2.length() - 1 - n2);
+                while (N != 0) {
+                    Str2 = Str2 + "0";
+                    N--;
+                }
+            } else {
+                int N = (Str2.length() - 1 - n2) - (Str1.length() - 1 - n1);
+                while (N != 0) {
+                    Str1 = Str1 + "0";
+                    N--;
+                }
+            }
+        
+            // Remove decimal points from both numbers for integer division
+            n1 = Str1.indexOf('.');
+            n2 = Str2.indexOf('.');
+            Str1 = Str1.substring(0, n1) + Str1.substring(n1 + 1);
+            Str2 = Str2.substring(0, n2) + Str2.substring(n2 + 1);
+        
+            // Append 1000 zeros to Str1 to allow enough precision after decimal
+            int L = 1000;
+            while (L != 0) {
+                Str1 = Str1 + "0";
+                L--;
+            }
+        
+            // Perform division using the helper Division method
+            String output_string = Division(Str1, Str2);
+        
+            // If result is 0, return "0.0"
+            if (output_string.equals("0")) return "0.0";
+        
+            // Insert decimal point 1000 places from the right
+            output_string = output_string.substring(0, output_string.length() - 1000) + "." + output_string.substring(output_string.length() - 1000);
+        
+            // Remove unnecessary leading and trailing zeros
+            output_string = RemoveStartZero(RemoveEndZero(output_string));
+        
+            // If result starts with '.', prefix with '0'
+            if (output_string.charAt(0) == '.') { output_string = '0' + output_string; }
+        
+            // If result ends with '.', append '0'
+            if (output_string.charAt(output_string.length() - 1) == '.') { output_string = output_string.substring(0, output_string.length() - 1) + ".0"; }
+        
+            // Round the result to 30 digits after the decimal point
+            return RoundOffTo30(output_string);
         }
         
-        
+    
+    /**
+     * @param Str
+     * @return 
+     */
+    public String RoundOffTo30(String Str) {
 
-        
-
-        n1=s1.indexOf('.');
-        n2=s2.indexOf('.');
-        s1=s1.substring(0,n1)+s1.substring(n1+1);
-        s2=s2.substring(0,n2)+s2.substring(n2+1);
-        
-
-        
-
-        
-       
-        int L=1000;
-        while(L!=0){
-            s1=s1+"0";
-            L--;
+        // Find the position of the decimal point in the string
+        int index_of_decimal_point = Str.indexOf('.');
+    
+        // Check if there are more than 30 digits after the decimal point
+        if ((Str.length() - 1 - index_of_decimal_point) > 30) {
+            // If so, round the string to keep only 30 digits after the decimal
+            Str = Str.substring(0, index_of_decimal_point + 31);
         }
-        //s1=RemoveStartZero(s1);
-        //s2=RemoveStartZero(s2);
-
-        String res=Division(s1,s2);
-       
-        if(res.equals("0")) return "0.0";
-        //if (res.equals("Division by Zero Error")) return res;
-        res=res.substring(0,(res.length()-1000))+"."+res.substring((res.length()-1000));
-
-        res=RemoveStartZero(RemoveEndZero(res));
-        
-        if(res.charAt(0)=='.'){ res='0'+res;}
-        
-
-        if(res.charAt(res.length()-1)=='.'){ res=res.substring(0,(res.length()-1))+".0";}
-
-
-        return RoundOffTo30(res);
-
+    
+        // Return the rounded result
+        return Str;
     }
-
-    public String RoundOffTo30(String s){
-        int index_of_decimal_point= s.indexOf('.');
-        if((s.length()-1-index_of_decimal_point)>30){
-            s=s.substring(0,index_of_decimal_point+31);
-        }
-        return s;
-
-    }
+    
     
 }
 
