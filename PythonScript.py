@@ -4,20 +4,21 @@ import subprocess
 
 def compile_java_source():
 
-    Java_source_files="Java_files"
-    package_path=os.path.join(Java_source_files,"arbitraryarithmetic")
-    main_file_path=os.path.join(Java_source_files,"MyInfArith.java")
-    AInteger_path=os.path.join(package_path,"AInteger.java")
-    AFloat_path=os.path.join(package_path,"AFloat.java")
-    Compilation_command=["javac",main_file_path,AInteger_path,AFloat_path]
+    Java_source_files="Java_files"   #folder containing java files
+    package_path=os.path.join(Java_source_files,"arbitraryarithmetic") #initializing path of package(containing AInteger aFloat)
+    main_file_path=os.path.join(Java_source_files,"MyInfArith.java")   #initializing main file path
+    AInteger_path=os.path.join(package_path,"AInteger.java")           #getting Ainteger java path
+     
+    AFloat_path=os.path.join(package_path,"AFloat.java")               #getting Afloat java path    
+    Compilation_command=["javac",main_file_path,AInteger_path,AFloat_path]  #command to compile all the files
 
     Compile_result=subprocess.run(Compilation_command,capture_output=True,text=True)
 
 
     
-    if Compile_result.returncode != 0:
+    if Compile_result.returncode != 0: #checking compiled or not
         print("Compilation failed")
-        sys.exit(1)
+        sys.exit(1)                   # exit if compilation failed
     print("Compilation successful")
 
 #function to run the main file
@@ -46,7 +47,6 @@ if len(sys.argv) != 5: #if arguements given more than 4
     sys.exit(1)
     
 
-    
 data_type, operation, first_operand, second_operand = sys.argv[1:]
 
     
