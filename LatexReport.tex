@@ -44,7 +44,9 @@ SDF_PROJECT/
                                AFloat.class
                                MyInfArith.class                        
       build.xml    
-      PythonScript.py                        
+      PythonScript.py
+      Report.tex
+      
                             
 \end{verbatim}
 
@@ -98,7 +100,7 @@ Default constructor that initializes the value to \texttt{"0"}.
 \node[draw, rectangle split, rectangle split parts=3, minimum width=10cm, align=center, fill=white] (AInteger) {
     \textbf{AInteger} % Class Name
     \nodepart{second}
-    \textit{- value : String} % Attribute
+    \textit{+ value : String} % Attribute
     \nodepart{third}
     + AInteger()\\
     + AInteger(value : String)\\
@@ -192,7 +194,7 @@ Default constructor that initializes the value to \texttt{"0.0"}.
 \node[draw, rectangle split, rectangle split parts=3, minimum width=12cm, align=center, fill=white] (AFloat) {
     \textbf{AFloat} % Class Name
     \nodepart{second}
-    \textit{- value : String} % Attribute
+    \textit{+ value : String} % Attribute
     \nodepart{third}
     + AFloat()\\
     + AFloat(value : String)\\
