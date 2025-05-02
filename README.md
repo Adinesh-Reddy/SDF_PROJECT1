@@ -2,7 +2,7 @@
 This project is about implementing an arbitrary precision arithmetic library in Java. The main goal is to implement accurate arithmetic operations on
 extremely large integers and floating point numbers without encountering overflow or round off errors which occurs generally. In programming, data types
 such as int or double have fixed sizes, which restrict the range and precision of
-numerical computations. To overcome these limitations, this project represents
+numerical computations. To overcome these limitations this project represents
 numbers as strings and implements arithmetic operations manually, allowing for
 complete control over precision and scale.
 The library supports basic operations addition, subtraction, multiplication, and division for both integer and floating-point types. All operations
